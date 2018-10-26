@@ -24,7 +24,3 @@ func (apiInfo *APIInfoMgr) APIHandler(w http.ResponseWriter, r *http.Request) {
 	encoder.SetIndent("", " ")
 	encoder.Encode(MetaData{time.Since(apiInfo.startTime).String(), "Service for IGC tracks.", "v1"})
 }
-
-func APIRedirectHandler(w http.ResponseWriter, r *http.Request) {
-	http.Redirect(w, r, "paragliding/api", http.StatusSeeOther) // Redirect this request
-}

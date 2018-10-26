@@ -35,6 +35,7 @@ func (server *Server) initHandlers() {
 	server.urlHandlers["GET"]["/test/"] = handleTest
 	server.urlHandlers["GET"]["/paragliding"] = func(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "paragliding/api", http.StatusSeeOther)
+		fmt.Fprint(w, server.apiInfoMgr.startTime)
 	}
 	server.urlHandlers["GET"]["/paragliding/api"] = server.apiInfoMgr.APIHandler
 }
