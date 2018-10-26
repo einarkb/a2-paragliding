@@ -25,8 +25,9 @@ func (server *Server) Start() {
 }
 
 func (server *Server) initHandlers() {
-	//server.urlHandlers = make(map[string]map[string]func(http.ResponseWriter, *http.Request))
-	//server.urlHandlers["GET"]["/test/"] = handleTest
+	server.urlHandlers = make(map[string]map[string]func(http.ResponseWriter, *http.Request))
+	server.urlHandlers["GET"] = make(map[string]func(http.ResponseWriter, *http.Request))
+	server.urlHandlers["GET"]["/test/"] = handleTest
 }
 
 func handleTest(w http.ResponseWriter, r *http.Request) {
