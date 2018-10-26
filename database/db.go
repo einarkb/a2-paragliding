@@ -11,7 +11,7 @@ import (
 // DB TODO
 type DB struct {
 	Name string
-	URL  string
+	URI  string
 
 	conn *mongo.Client
 	db   *mongo.Database
@@ -19,7 +19,7 @@ type DB struct {
 
 // Connect creates a connection to the database
 func (db *DB) Connect() {
-	conn, err := mongo.Connect(context.Background(), db.URL, nil)
+	conn, err := mongo.Connect(context.Background(), db.URI, nil)
 	if err != nil {
 		log.Fatal(err)
 		return
