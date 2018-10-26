@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"regexp"
 	"time"
 
 	db "github.com/einarkb/paragliding/database"
@@ -29,15 +30,17 @@ func (server *Server) Start() {
 }
 
 func (server *Server) initHandlers() {
+	//intializing maps
 	server.urlHandlers = make(map[string]map[string]func(http.ResponseWriter, *http.Request))
 	server.urlHandlers["GET"] = make(map[string]func(http.ResponseWriter, *http.Request))
 	server.urlHandlers["POST"] = make(map[string]func(http.ResponseWriter, *http.Request))
 
-	server.urlHandlers["GET"]["/test/"] = handleTest
-	server.urlHandlers["GET"]["/paragliding"] = func(w http.ResponseWriter, r *http.Request) {
+	// registering handlers
+	server.urlHandlers["GET"]["^/paragliding$"] = func(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "paragliding/api", http.StatusSeeOther)
 	}
-	server.urlHandlers["GET"]["/paragliding/api"] = func(w http.ResponseWriter, r *http.Request) {
+
+	server.urlHandlers["GET"]["^/paragliding/api$"] = func(w http.ResponseWriter, r *http.Request) {
 		type MetaData struct {
 			Uptime  string `json:"uptime"`
 			Info    string `json:"info"`
@@ -47,7 +50,7 @@ func (server *Server) initHandlers() {
 		w.Header().Add("content-type", "application/json")
 		encoder := json.NewEncoder(w)
 		encoder.SetIndent("", " ")
-		encoder.Encode(MetaData{time.Since(server.startTime).String(), "Service for IGC tracks.", "v1"})
+		encoder.Encode(MetaData{time.Since(server.startTime).String(), "Service for Paragliding tracks.", "v1"})
 	}
 }
 
@@ -63,7 +66,8 @@ func (server *Server) urlHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	for url, hFunc := range handlerMap {
-		if r.URL.Path == url {
+		res, _ := regexp.MatchString(r.URL.Path, url)
+		if res {
 			hFunc(w, r)
 			return
 		}
