@@ -33,7 +33,10 @@ func (server *Server) initHandlers() {
 	server.urlHandlers["POST"] = make(map[string]func(http.ResponseWriter, *http.Request))
 
 	server.urlHandlers["GET"]["/test/"] = handleTest
-	server.urlHandlers["GET"]["/api/"] = server.apiInfoMgr.APIHandler
+	server.urlHandlers["GET"]["/paragliding"] = func(w http.ResponseWriter, r *http.Request) {
+		http.Redirect(w, r, "paragliding/api", http.StatusSeeOther)
+	}
+	server.urlHandlers["GET"]["/paragliding/api"] = server.apiInfoMgr.APIHandler
 }
 
 func handleTest(w http.ResponseWriter, r *http.Request) {
