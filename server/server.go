@@ -3,12 +3,14 @@ package server
 import (
 	"fmt"
 	"net/http"
+	"time"
 
 	db "github.com/einarkb/paragliding/database"
 )
 
 type Server struct {
-	db *db.DB
+	db         *db.DB
+	apiInfoMgr *APIInfoMgr
 
 	//map request type (eg. GET/POST) that contains map of acceptable urls and the function to handle each url
 	urlHandlers map[string]map[string]func(http.ResponseWriter, *http.Request)
@@ -18,6 +20,7 @@ type Server struct {
 func (server *Server) Start() {
 	server.db = &db.DB{URI: "mongodb://test:test12@ds141783.mlab.com:41783", Name: "a2-trackdb"}
 	server.db.Connect()
+	server.apiInfoMgr = &APIInfoMgr{startTime: time.Now()}
 	server.initHandlers()
 
 	http.HandleFunc("/", server.urlHandler)
@@ -30,15 +33,17 @@ func (server *Server) initHandlers() {
 	server.urlHandlers["POST"] = make(map[string]func(http.ResponseWriter, *http.Request))
 
 	server.urlHandlers["GET"]["/test/"] = handleTest
+	server.urlHandlers["GET"]["/api/"] = handleTest
 }
 
 func handleTest(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprint(w, "hello!!!!")
 }
 
+// urHandler is reponsible for routing the different requests to the correct handler
 func (server *Server) urlHandler(w http.ResponseWriter, r *http.Request) {
 	handlerMap, exists := server.urlHandlers[r.Method]
-	if !exists {
+	if !exists { // if not a request type we will handle (not GET or POST in this case)
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
@@ -49,6 +54,5 @@ func (server *Server) urlHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
-	fmt.Fprint(w, r.URL.Path)
-
+	http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
 }
