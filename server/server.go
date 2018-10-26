@@ -34,7 +34,7 @@ func handleTest(w http.ResponseWriter, r *http.Request) {
 }
 
 func (server *Server) urlHandler(w http.ResponseWriter, r *http.Request) {
-	handlerMap, exists := server.urlHandlers[r.Method]
+	/*handlerMap, exists := server.urlHandlers[r.Method]
 	if !exists {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
@@ -45,6 +45,7 @@ func (server *Server) urlHandler(w http.ResponseWriter, r *http.Request) {
 			hFunc(w, r)
 			return
 		}
-	}
+	}*/
+	fmt.Fprint(w, r.URL.Path)
 
 }
