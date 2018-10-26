@@ -33,7 +33,7 @@ func (server *Server) initHandlers() {
 	server.urlHandlers["POST"] = make(map[string]func(http.ResponseWriter, *http.Request))
 
 	server.urlHandlers["GET"]["/test/"] = handleTest
-	server.urlHandlers["GET"]["/api/"] = handleTest
+	server.urlHandlers["GET"]["/api/"] = server.apiInfoMgr.APIHandler
 }
 
 func handleTest(w http.ResponseWriter, r *http.Request) {
@@ -48,7 +48,6 @@ func (server *Server) urlHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	for url, hFunc := range handlerMap {
-		fmt.Fprint(w, r.URL.Path)
 		if r.URL.Path == url {
 			hFunc(w, r)
 			return
