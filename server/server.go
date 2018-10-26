@@ -27,6 +27,8 @@ func (server *Server) Start() {
 func (server *Server) initHandlers() {
 	server.urlHandlers = make(map[string]map[string]func(http.ResponseWriter, *http.Request))
 	server.urlHandlers["GET"] = make(map[string]func(http.ResponseWriter, *http.Request))
+	server.urlHandlers["POST"] = make(map[string]func(http.ResponseWriter, *http.Request))
+
 	server.urlHandlers["GET"]["/test/"] = handleTest
 }
 
@@ -35,7 +37,7 @@ func handleTest(w http.ResponseWriter, r *http.Request) {
 }
 
 func (server *Server) urlHandler(w http.ResponseWriter, r *http.Request) {
-	/*handlerMap, exists := server.urlHandlers[r.Method]
+	handlerMap, exists := server.urlHandlers[r.Method]
 	if !exists {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
@@ -46,7 +48,7 @@ func (server *Server) urlHandler(w http.ResponseWriter, r *http.Request) {
 			hFunc(w, r)
 			return
 		}
-	}*/
+	}
 	fmt.Fprint(w, r.URL.Path)
 
 }
