@@ -8,10 +8,12 @@ import (
 	"time"
 
 	db "github.com/einarkb/paragliding/database"
+	"github.com/einarkb/paragliding/track"
 )
 
 type Server struct {
 	db        *db.DB
+	trackMgr  *track.TrackMgr
 	startTime time.Time
 
 	//map request type (eg. GET/POST) that contains map of acceptable urls and the function to handle each url
@@ -23,6 +25,7 @@ func (server *Server) Start() {
 	server.startTime = time.Now()
 	server.db = &db.DB{URI: "mongodb://test:test12@ds141783.mlab.com:41783", Name: "a2-trackdb"}
 	server.db.Connect()
+	server.trackMgr = &track.TrackMgr{DB: server.db}
 	server.initHandlers()
 
 	http.HandleFunc("/", server.urlHandler)
@@ -51,6 +54,10 @@ func (server *Server) initHandlers() {
 		encoder := json.NewEncoder(w)
 		encoder.SetIndent("", " ")
 		encoder.Encode(MetaData{server.calculateUptime(), "Service for Paragliding tracks.", "v1"})
+	}
+
+	server.urlHandlers["POST"]["^/paragliding/api/track$"] = func(w http.ResponseWriter, r *http.Request) {
+		http.Redirect(w, r, "paragliding/api", http.StatusSeeOther)
 	}
 }
 

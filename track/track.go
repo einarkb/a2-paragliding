@@ -10,7 +10,7 @@ import (
 )
 
 type TrackMgr struct {
-	db *db.DB
+	DB *db.DB
 }
 
 // HandlerPostTrack is the handler for POST /api/track. it registers the track and replies with the id
@@ -23,7 +23,7 @@ func (tMgr *TrackMgr) HandlerPostTrack(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "could not get a track from url: "+postData["url"], http.StatusNotFound)
 			return
 		}
-		id, added := tMgr.db.Insert("tracks", postData["url"])
+		id, added := tMgr.DB.Insert("tracks", postData["url"])
 		if added {
 			w.Header().Add("content-type", "application/json")
 			json.NewEncoder(w).Encode(struct {
