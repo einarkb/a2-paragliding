@@ -1,5 +1,5 @@
 package server
 
-func hello() string {
+func Hello() string {
 	return "hello!"
 }
