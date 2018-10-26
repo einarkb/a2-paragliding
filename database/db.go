@@ -28,12 +28,12 @@ func (db *DB) Connect() {
 	db.db = db.conn.Database(db.Name)
 }
 
-// Insert insert an object into specified collection. the id of the inserted object and an error if any
-func (db *DB) Insert(collection string, obj interface{}) (string, error) {
+// Insert insert an object into specified collection. the id of the inserted object and and wether it was added
+func (db *DB) Insert(collection string, obj interface{}) (string, bool) {
 	res, err := db.db.Collection(collection).InsertOne(context.Background(), obj)
 	if err != nil {
 		log.Println(err)
-		return "", err
+		return "", false
 	}
-	return res.InsertedID.(*bson.Element).Value().ObjectID().Hex(), err
+	return res.InsertedID.(*bson.Element).Value().ObjectID().Hex(), true
 }

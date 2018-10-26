@@ -54,10 +54,6 @@ func (server *Server) initHandlers() {
 	}
 }
 
-func handleTest(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprint(w, "hello!!!!")
-}
-
 // urHandler is reponsible for routing the different requests to the correct handler
 func (server *Server) urlHandler(w http.ResponseWriter, r *http.Request) {
 	handlerMap, exists := server.urlHandlers[r.Method]
