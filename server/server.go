@@ -1,6 +1,7 @@
 package server
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"time"
@@ -9,8 +10,8 @@ import (
 )
 
 type Server struct {
-	db         *db.DB
-	apiInfoMgr *APIInfoMgr
+	db        *db.DB
+	startTime time.Time
 
 	//map request type (eg. GET/POST) that contains map of acceptable urls and the function to handle each url
 	urlHandlers map[string]map[string]func(http.ResponseWriter, *http.Request)
@@ -18,9 +19,9 @@ type Server struct {
 
 // Start starts the server
 func (server *Server) Start() {
+	server.startTime = time.Now()
 	server.db = &db.DB{URI: "mongodb://test:test12@ds141783.mlab.com:41783", Name: "a2-trackdb"}
 	server.db.Connect()
-	server.apiInfoMgr = &APIInfoMgr{startTime: time.Now()}
 	server.initHandlers()
 
 	http.HandleFunc("/", server.urlHandler)
@@ -34,10 +35,20 @@ func (server *Server) initHandlers() {
 
 	server.urlHandlers["GET"]["/test/"] = handleTest
 	server.urlHandlers["GET"]["/paragliding"] = func(w http.ResponseWriter, r *http.Request) {
-		//http.Redirect(w, r, "paragliding/api", http.StatusSeeOther)
-		fmt.Fprint(w, server.apiInfoMgr.startTime)
+		http.Redirect(w, r, "paragliding/api", http.StatusSeeOther)
 	}
-	server.urlHandlers["GET"]["/paragliding/api"] = server.apiInfoMgr.APIHandler
+	server.urlHandlers["GET"]["/paragliding/api"] = func(w http.ResponseWriter, r *http.Request) {
+		type MetaData struct {
+			Uptime  string `json:"uptime"`
+			Info    string `json:"info"`
+			Version string `json:"version"`
+		}
+
+		w.Header().Add("content-type", "application/json")
+		encoder := json.NewEncoder(w)
+		encoder.SetIndent("", " ")
+		encoder.Encode(MetaData{time.Since(server.startTime).String(), "Service for IGC tracks.", "v1"})
+	}
 }
 
 func handleTest(w http.ResponseWriter, r *http.Request) {
