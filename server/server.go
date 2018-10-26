@@ -56,9 +56,7 @@ func (server *Server) initHandlers() {
 		encoder.Encode(MetaData{server.calculateUptime(), "Service for Paragliding tracks.", "v1"})
 	}
 
-	server.urlHandlers["POST"]["^/paragliding/api/track$"] = func(w http.ResponseWriter, r *http.Request) {
-		http.Redirect(w, r, "paragliding/api", http.StatusSeeOther)
-	}
+	server.urlHandlers["POST"]["^/paragliding/api/track$"] = server.trackMgr.HandlerPostTrack
 }
 
 // urHandler is reponsible for routing the different requests to the correct handler
