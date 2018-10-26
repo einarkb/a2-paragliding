@@ -50,7 +50,7 @@ func (server *Server) initHandlers() {
 		w.Header().Add("content-type", "application/json")
 		encoder := json.NewEncoder(w)
 		encoder.SetIndent("", " ")
-		encoder.Encode(MetaData{time.Since(server.startTime).String(), "Service for Paragliding tracks.", "v1"})
+		encoder.Encode(MetaData{server.calculateUptime(), "Service for Paragliding tracks.", "v1"})
 	}
 }
 
@@ -73,4 +73,17 @@ func (server *Server) urlHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
+}
+
+func (server *Server) calculateUptime() string {
+	dur := time.Since(server.startTime)
+
+	sec := int(dur.Seconds()) % 60
+	min := int(dur.Minutes()) % 60
+	hour := int(dur.Hours()) % 24
+	day := int(dur.Hours()/24) % 7
+	month := int(dur.Hours()/24/7/4.34524) % 12
+	year := int(dur.Hours() / 24 / 365.25)
+
+	return fmt.Sprintf("P%dY%dM%dDT%dH%dM%dS", year, month, day, hour, min, sec)
 }
