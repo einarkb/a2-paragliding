@@ -71,6 +71,7 @@ func (server *Server) urlHandler(w http.ResponseWriter, r *http.Request) {
 	for url, hFunc := range handlerMap {
 		res, _ := regexp.MatchString(r.URL.Path, url)
 		if res {
+			fmt.Fprint(w, "huuuu")
 			hFunc(w, r)
 			return
 		}

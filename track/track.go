@@ -61,6 +61,7 @@ func (tMgr *TrackMgr) HandlerGetAllTracks(w http.ResponseWriter, r *http.Request
 
 // HandlerGetTrackByID is the handler for GET /api/track/<id>. it responds with info about the track
 func (tMgr *TrackMgr) HandlerGetTrackByID(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprint(w, "hei")
 	w.Header().Add("content-type", "application/json")
 	parts := strings.Split(r.URL.Path, "/")
 	fmt.Fprint(w, len(parts))
