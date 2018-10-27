@@ -89,5 +89,9 @@ func (db *DB) GetTrackByID(id string) (TrackInfo, bool) {
 			log.Fatal(err)
 		}
 	}
+	if track == (TrackInfo{}) {
+		return track, false
+	}
+
 	return track, true
 }
