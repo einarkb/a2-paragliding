@@ -76,9 +76,6 @@ func (tMgr *TrackMgr) HandlerGetTrackFieldByID(w http.ResponseWriter, r *http.Re
 	w.Header().Add("content-type", "text/plain")
 	parts := strings.Split(r.URL.Path, "/")
 	trackInfo, found := tMgr.DB.GetTrackByID(parts[len(parts)-2]) // guaranteed to be valid cause of regex in server.go
-	for i, v := range parts {
-		fmt.Fprint(w, strconv.Itoa(i)+" "+v+"   ")
-	}
 
 	if !found {
 		http.Error(w, "the id does not exist", http.StatusNotFound)
