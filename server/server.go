@@ -7,6 +7,7 @@ import (
 	"regexp"
 	"time"
 
+	"github.com/einarkb/paragliding/admin"
 	db "github.com/einarkb/paragliding/database"
 	"github.com/einarkb/paragliding/track"
 )
@@ -14,7 +15,7 @@ import (
 type Server struct {
 	db        *db.DB
 	trackMgr  *track.TrackMgr
-	adminMgr  *AdminMgr
+	adminMgr  *admin.AdminMgr
 	startTime time.Time
 
 	//map request type (eg. GET/POST) that contains map of acceptable urls and the function to handle each url
@@ -27,7 +28,7 @@ func (server *Server) Start() {
 	server.db = &db.DB{URI: "mongodb://test:test12@ds141783.mlab.com:41783/a2-trackdb", Name: "a2-trackdb"}
 	server.db.Connect()
 	server.trackMgr = &track.TrackMgr{DB: server.db}
-	server.adminMgr = &track.AdminMgr{DB: server.db}
+	server.adminMgr = &admin.AdminMgr{DB: server.db}
 	server.initHandlers()
 
 	http.HandleFunc("/", server.urlHandler)
