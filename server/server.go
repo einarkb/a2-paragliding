@@ -59,6 +59,7 @@ func (server *Server) initHandlers() {
 	server.urlHandlers["POST"]["^/paragliding/api/track$"] = server.trackMgr.HandlerPostTrack
 	server.urlHandlers["GET"]["^/paragliding/api/track$"] = server.trackMgr.HandlerGetAllTracks
 	server.urlHandlers["GET"]["^/paragliding/api/track/[a-zA-Z0-9]{1,100}$"] = server.trackMgr.HandlerGetTrackByID
+	server.urlHandlers["GET"]["^/paragliding/api/track/[a-zA-Z0-9]{1,50}/[a-zA-Z0-9_.-]{1,50}$"] = server.trackMgr.HandlerGetTrackByID
 }
 
 // urHandler is reponsible for routing the different requests to the correct handler

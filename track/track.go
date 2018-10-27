@@ -61,17 +61,42 @@ func (tMgr *TrackMgr) HandlerGetAllTracks(w http.ResponseWriter, r *http.Request
 
 // HandlerGetTrackByID is the handler for GET /api/track/<id>. it responds with info about the track
 func (tMgr *TrackMgr) HandlerGetTrackByID(w http.ResponseWriter, r *http.Request) {
-	//fmt.Fprint(w, "hei")
 	w.Header().Add("content-type", "application/json")
 	parts := strings.Split(r.URL.Path, "/")
-	//fmt.Fprint(w, len(parts))
-	fmt.Fprint(w, parts[len(parts)-1])
 	trackInfo, found := tMgr.DB.GetTrackByID(parts[len(parts)-1]) // guaranteed to be valid cause of regex in server.go
 	if !found {
 		http.Error(w, "the id does not exist", http.StatusNotFound)
 		return
 	}
 	json.NewEncoder(w).Encode(trackInfo)
+}
+
+// HandlerGetTrackFieldByID is the handler for GET /api/track/<id><field>. is reponds with the single informationc ontained in that field
+func (tMgr *TrackMgr) HandlerGetTrackFieldByID(w http.ResponseWriter, r *http.Request) {
+	w.Header().Add("content-type", "text/plain")
+	parts := strings.Split(r.URL.Path, "/")
+	trackInfo, found := tMgr.DB.GetTrackByID(parts[len(parts)-2]) // guaranteed to be valid cause of regex in server.go
+	if !found {
+		http.Error(w, "the id does not exist", http.StatusNotFound)
+		return
+	}
+	field := parts[len(parts)-1]
+	switch field {
+	case "pilot":
+		fmt.Fprintf(w, "pilot: %s", trackInfo.Pilot)
+	case "glider":
+		fmt.Fprintf(w, "glider: %s", trackInfo.Glider)
+	case "glider_id":
+		fmt.Fprintf(w, "glider_id: %s", trackInfo.GliderID)
+	case "H_date":
+		fmt.Fprintf(w, "H_date: %s", trackInfo.HDate)
+	case "track_length":
+		fmt.Fprintf(w, "track_length: %s", trackInfo.TrackLength)
+	case "track_src_url":
+		fmt.Fprintf(w, "track_src_url: %s", trackInfo.TrackLength)
+	default:
+		http.Error(w, "invalid field specified", http.StatusNotFound)
+	}
 }
 
 // CalculatedistanceFromPoints take a set of points and retunr the total distance
