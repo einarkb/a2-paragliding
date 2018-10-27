@@ -65,8 +65,8 @@ func (tMgr *TrackMgr) HandlerGetTrackByID(w http.ResponseWriter, r *http.Request
 	w.Header().Add("content-type", "application/json")
 	parts := strings.Split(r.URL.Path, "/")
 	//fmt.Fprint(w, len(parts))
-	fmt.Fprint(w, parts[len(parts)-2])
-	trackInfo, found := tMgr.DB.GetTrackByID(parts[len(parts)-2]) // guaranteed to be valid cause of regex in server.go
+	fmt.Fprint(w, parts[len(parts)-1])
+	trackInfo, found := tMgr.DB.GetTrackByID(parts[len(parts)-1]) // guaranteed to be valid cause of regex in server.go
 	if !found {
 		http.Error(w, "the id does not exist", http.StatusNotFound)
 		return
