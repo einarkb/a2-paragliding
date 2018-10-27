@@ -26,7 +26,7 @@ func (tMgr *TrackMgr) HandlerPostTrack(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "could not get a track from url: "+postData["url"], http.StatusNotFound)
 			return
 		}
-		trackInfo := TrackInfo{ID: objectid.New(), HDate: track.Date.String(), Pilot: track.Pilot,
+		trackInfo := db.TrackInfo{ID: objectid.New(), HDate: track.Date.String(), Pilot: track.Pilot,
 			Glider: track.GliderType, GliderID: track.GliderID, TrackLength: CalculatedistanceFromPoints(track.Points),
 			TrackURL: postData["url"]}
 		id, added := tMgr.DB.Insert("tracks", trackInfo)
