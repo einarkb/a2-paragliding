@@ -14,6 +14,7 @@ import (
 type Server struct {
 	db        *db.DB
 	trackMgr  *track.TrackMgr
+	adminMgr  *AdminMgr
 	startTime time.Time
 
 	//map request type (eg. GET/POST) that contains map of acceptable urls and the function to handle each url
@@ -26,6 +27,7 @@ func (server *Server) Start() {
 	server.db = &db.DB{URI: "mongodb://test:test12@ds141783.mlab.com:41783/a2-trackdb", Name: "a2-trackdb"}
 	server.db.Connect()
 	server.trackMgr = &track.TrackMgr{DB: server.db}
+	server.adminMgr = &track.AdminMgr{DB: server.db}
 	server.initHandlers()
 
 	http.HandleFunc("/", server.urlHandler)
@@ -60,6 +62,8 @@ func (server *Server) initHandlers() {
 	server.urlHandlers["GET"]["^/paragliding/api/track$"] = server.trackMgr.HandlerGetAllTracks
 	server.urlHandlers["GET"]["^/paragliding/api/track/[a-zA-Z0-9]{1,100}$"] = server.trackMgr.HandlerGetTrackByID
 	server.urlHandlers["GET"]["^/paragliding/api/track/[a-zA-Z0-9]{1,50}/[a-zA-Z0-9_.-]{1,50}$"] = server.trackMgr.HandlerGetTrackFieldByID
+
+	server.urlHandlers["GET"]["^/paragliding/admin/api/tracks_count$"] = server.adminMgr.HandlerTrackCount
 }
 
 // urHandler is reponsible for routing the different requests to the correct handler
