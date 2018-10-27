@@ -61,11 +61,11 @@ func (tMgr *TrackMgr) HandlerGetAllTracks(w http.ResponseWriter, r *http.Request
 
 // HandlerGetTrackByID is the handler for GET /api/track/<id>. it responds with info about the track
 func (tMgr *TrackMgr) HandlerGetTrackByID(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprint(w, "hei")
+	//fmt.Fprint(w, "hei")
 	w.Header().Add("content-type", "application/json")
 	parts := strings.Split(r.URL.Path, "/")
-	fmt.Fprint(w, len(parts))
-	fmt.Fprint(w, parts[4])
+	//fmt.Fprint(w, len(parts))
+	fmt.Fprint(w, parts[len(parts)-2])
 	trackInfo, found := tMgr.DB.GetTrackByID(parts[len(parts)-2]) // guaranteed to be valid cause of regex in server.go
 	if !found {
 		http.Error(w, "the id does not exist", http.StatusNotFound)

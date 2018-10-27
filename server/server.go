@@ -68,11 +68,11 @@ func (server *Server) urlHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
-	fmt.Fprint(w, r.URL.Path)
+	//fmt.Fprint(w, r.URL.Path)
 	for url, hFunc := range handlerMap {
 		res, _ := regexp.MatchString(url, r.URL.Path)
 		if res {
-			fmt.Fprint(w, "huuuu")
+			//fmt.Fprint(w, "huuuu")
 			hFunc(w, r)
 			return
 		}
