@@ -20,7 +20,7 @@ type DB struct {
 }
 
 type TrackInfo struct {
-	ID          objectid.ObjectID `bson:"_id" json:"-"`
+	ID          objectid.ObjectID `bson:"_id" json:"id"`
 	HDate       string            `bson:"H_date" json:"H_Date"`
 	Pilot       string            `bson:"pilot" json:"pilot"`
 	Glider      string            `bson:"glider" json:"glider"`
