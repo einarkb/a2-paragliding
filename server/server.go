@@ -23,7 +23,7 @@ type Server struct {
 // Start starts the server
 func (server *Server) Start() {
 	server.startTime = time.Now()
-	server.db = &db.DB{URI: "mongodb://test:test12@ds141783.mlab.com:41783", Name: "a2-trackdb"}
+	server.db = &db.DB{URI: "mongodb://test:test12@ds141783.mlab.com:41783/a2-trackdb", Name: "a2-trackdb"}
 	server.db.Connect()
 	server.trackMgr = &track.TrackMgr{DB: server.db}
 	server.initHandlers()
