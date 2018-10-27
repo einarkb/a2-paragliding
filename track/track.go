@@ -5,6 +5,7 @@ import (
 	"io"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/mongodb/mongo-go-driver/bson/objectid"
 
@@ -55,6 +56,18 @@ func (tMgr *TrackMgr) HandlerGetAllTracks(w http.ResponseWriter, r *http.Request
 	}
 	json.NewEncoder(w).Encode(ids)
 
+}
+
+// HandlerGetTrackByID is the handler for GET /api/track/<id>. it responds with info about the track
+func (tMgr *TrackMgr) HandlerGetTrackByID(w http.ResponseWriter, r *http.Request) {
+	w.Header().Add("content-type", "application/json")
+	parts := strings.Split(r.URL.Path, "/")
+	trackInfo, found := tMgr.DB.GetTrackByID(parts[len(parts)-1]) // guaranteed to be valid cause of regex in server.go
+	if !found {
+		http.Error(w, "the id does not exist", http.StatusNotFound)
+		return
+	}
+	json.NewEncoder(w).Encode(trackInfo)
 }
 
 // CalculatedistanceFromPoints take a set of points and retunr the total distance

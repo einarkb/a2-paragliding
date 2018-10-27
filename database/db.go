@@ -71,3 +71,23 @@ func (db *DB) GetAllTrackIDs() ([]objectid.ObjectID, error) {
 	}
 	return ids, err
 }
+
+// GetTrackByID returns the track given an id and true/false wether it was found
+func (db *DB) GetTrackByID(id string) (TrackInfo, bool) {
+	var cursor mongo.Cursor
+	var err error
+	track := TrackInfo{}
+	cursor, err = db.db.Collection("tracks").Find(context.Background(), bson.NewDocument(bson.EC.String("_id", id)))
+	if err != nil {
+		fmt.Println(err)
+		return track, false
+	}
+	defer cursor.Close(context.Background())
+	for cursor.Next(context.Background()) {
+		err := cursor.Decode(&track)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
+	return track, true
+}
