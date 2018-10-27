@@ -98,10 +98,10 @@ func (db *DB) GetTrackByID(id string) (TrackInfo, bool) {
 }
 
 // GetTrackCount returns the number of tracks in the database
-func (db *DB) GetTrackCount() int64 {
+func (db *DB) GetTrackCount() (int64, error) {
 	count, err := db.db.Collection("tracks").Count(context.Background(), nil)
 	if err != nil {
 		log.Fatal(err)
 	}
-	return count
+	return count, err
 }
