@@ -77,7 +77,7 @@ func (db *DB) GetTrackByID(id string) (TrackInfo, bool) {
 	var cursor mongo.Cursor
 	var err error
 	track := TrackInfo{}
-	cursor, err = db.db.Collection("tracks").Find(context.Background(), bson.NewDocument(bson.EC.String("name", id)))
+	cursor, err = db.db.Collection("tracks").Find(context.Background(), bson.NewDocument(bson.EC.String("_id", id)))
 	if err != nil {
 		fmt.Println(err)
 		return track, false
