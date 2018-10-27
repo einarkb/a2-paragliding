@@ -105,3 +105,15 @@ func (db *DB) GetTrackCount() (int64, error) {
 	}
 	return count, err
 }
+
+// DeleteAllTracks returns the number of tracks in the database
+func (db *DB) DeleteAllTracks() (int64, error) {
+	col := db.db.Collection("tracks")
+	count, err := col.Count(context.Background(), nil)
+	if err != nil {
+		log.Fatal(err)
+		return count, err
+	}
+	col.DeleteMany(context.Background(), bson.NewDocument())
+	return count, err
+}

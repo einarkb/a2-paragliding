@@ -40,6 +40,7 @@ func (server *Server) initHandlers() {
 	server.urlHandlers = make(map[string]map[string]func(http.ResponseWriter, *http.Request))
 	server.urlHandlers["GET"] = make(map[string]func(http.ResponseWriter, *http.Request))
 	server.urlHandlers["POST"] = make(map[string]func(http.ResponseWriter, *http.Request))
+	server.urlHandlers["DELETE"] = make(map[string]func(http.ResponseWriter, *http.Request))
 
 	// registering handlers
 	server.urlHandlers["GET"]["^/paragliding$"] = func(w http.ResponseWriter, r *http.Request) {
@@ -65,12 +66,13 @@ func (server *Server) initHandlers() {
 	server.urlHandlers["GET"]["^/paragliding/api/track/[a-zA-Z0-9]{1,50}/[a-zA-Z0-9_.-]{1,50}$"] = server.trackMgr.HandlerGetTrackFieldByID
 
 	server.urlHandlers["GET"]["^/paragliding/admin/api/tracks_count$"] = server.adminMgr.HandlerTrackCount
+	server.urlHandlers["DELETE"]["^/paragliding/admin/api/tracks$"] = server.adminMgr.HandlerDeleteAllTracks
 }
 
 // urHandler is reponsible for routing the different requests to the correct handler
 func (server *Server) urlHandler(w http.ResponseWriter, r *http.Request) {
 	handlerMap, exists := server.urlHandlers[r.Method]
-	if !exists { // if not a request type we will handle (not GET or POST in this case)
+	if !exists { // if not a request type we will handle (not GET, POST or DELETE in this case)
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
