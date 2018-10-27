@@ -82,7 +82,7 @@ func (db *DB) GetTrackByID(id string) (TrackInfo, bool) {
 		fmt.Println(err)
 		return track, false
 	}
-	defer cursor.Close(context.Background())
+	//defer cursor.Close(context.Background())
 	for cursor.Next(context.Background()) {
 		err := cursor.Decode(&track)
 		if err != nil {
