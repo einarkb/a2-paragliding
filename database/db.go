@@ -27,12 +27,14 @@ type TrackInfo struct {
 	GliderID    string            `bson:"glider_id" json:"glider_id"`
 	TrackLength string            `bson:"track_length" json:"track_length"`
 	TrackURL    string            `bson:"track_url" json:"track_url"`
+	Timestamp   int64             `bson:"timestamp" json:"-"`
 }
 
 type WebhookInfo struct {
 	ID              objectid.ObjectID `bson:"_id" json:"-"`
 	WebhookURL      string            `bson:"webhookURL" json:"webhookURL"`
 	MinTriggerValue int               `bson:"minTriggerValue" json:"minTriggerValue"`
+	Counter         int               `bson:"counter" json:"-"`
 }
 
 // Connect creates a connection to the database
@@ -122,4 +124,14 @@ func (db *DB) DeleteAllTracks() (int64, error) {
 	}
 	col.DeleteMany(context.Background(), bson.NewDocument())
 	return count, err
+}
+
+// GetLatestTrack returns the latest added track
+func (db *DB) GetLatestTrack() TrackInfo {
+	var cursor mongo.Cursor
+	//var err error
+	track := TrackInfo{}
+	cursor, _ = db.db.Collection("tracks").Find(context.Background(), bson.NewDocument(bson.EC.Int64("timestamp", -1)))
+	cursor.Decode(&track)
+	return track
 }

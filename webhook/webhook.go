@@ -26,7 +26,7 @@ func (whMgr *WebHookMgr) HandlerNewTrackWebHook(w http.ResponseWriter, r *http.R
 			http.Error(w, "triggervalue is not a number", http.StatusBadRequest)
 			return
 		}
-		wekbookInfo := db.WebhookInfo{ID: objectid.New(), WebhookURL: postData["url"], MinTriggerValue: triggerVal}
+		wekbookInfo := db.WebhookInfo{ID: objectid.New(), WebhookURL: postData["url"], MinTriggerValue: triggerVal, Counter: 0}
 		id, added := whMgr.DB.Insert("webhooks", wekbookInfo)
 		if added {
 			w.Header().Add("content-type", "application/json")
@@ -41,4 +41,8 @@ func (whMgr *WebHookMgr) HandlerNewTrackWebHook(w http.ResponseWriter, r *http.R
 	} else {
 		http.Error(w, "Something went wrong", http.StatusInternalServerError)
 	}
+}
+
+func InvokeWebHooks() {
+
 }

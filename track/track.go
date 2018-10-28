@@ -7,15 +7,18 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/mongodb/mongo-go-driver/bson/objectid"
 
 	db "github.com/einarkb/paragliding/database"
+	"github.com/einarkb/paragliding/webhook"
 	igc "github.com/marni/goigc"
 )
 
 type TrackMgr struct {
-	DB *db.DB
+	DB    *db.DB
+	WHMgr *webhook.WebHookMgr
 }
 
 // HandlerPostTrack is the handler for POST /api/track. it registers the track and replies with the id
@@ -30,7 +33,7 @@ func (tMgr *TrackMgr) HandlerPostTrack(w http.ResponseWriter, r *http.Request) {
 		}
 		trackInfo := db.TrackInfo{ID: objectid.New(), HDate: track.Date.String(), Pilot: track.Pilot,
 			Glider: track.GliderType, GliderID: track.GliderID, TrackLength: CalculatedistanceFromPoints(track.Points),
-			TrackURL: postData["url"]}
+			TrackURL: postData["url"], Timestamp: (time.Now().UnixNano() / int64(time.Millisecond))}
 		id, added := tMgr.DB.Insert("tracks", trackInfo)
 		if added {
 			w.Header().Add("content-type", "application/json")
