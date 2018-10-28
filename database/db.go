@@ -126,13 +126,25 @@ func (db *DB) DeleteAllTracks() (int64, error) {
 	return count, err
 }
 
-// GetLatestTrack returns the latest added track
-func (db *DB) GetLatestTrack() TrackInfo {
+// GetAllTracks returns all the tracks in the database
+func (db *DB) GetAllTracks() ([]TrackInfo, error) {
 	var cursor mongo.Cursor
-	//var err error
+	var err error
+	cursor, err = db.db.Collection("tracks").Find(context.Background(), nil)
+	if err != nil {
+		fmt.Println(err)
+		return nil, err
+	}
+	defer cursor.Close(context.Background())
+
+	var tracks []TrackInfo
 	track := TrackInfo{}
-	cursor, _ = db.db.Collection("tracks").Find(context.Background(), bson.NewDocument(bson.EC.Int64("timestamp", -1)))
-	cursor.Next(context.Background())
-	cursor.Decode(&track)
-	return track
+	for cursor.Next(context.Background()) { // cannot for the life of me figure out the new mongo driver version
+		err := cursor.Decode(&track) // looping through to find last...
+		if err != nil {
+			log.Fatal(err)
+		}
+		tracks = append(tracks, track)
+	}
+	return tracks, err
 }
