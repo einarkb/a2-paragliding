@@ -67,8 +67,8 @@ func (mgrTicker *MgrTicker) HandlerTicker(w http.ResponseWriter, r *http.Request
 		return
 	}
 	tickerResp.TStop = tracks[stopIndex].Timestamp
-	for _, v := range tracks {
-		tickerResp.TrackIDs = append(tickerResp.TrackIDs, v.ID)
+	for i := 0; i < mgrTicker.PageCap; i++ {
+		tickerResp.TrackIDs = append(tickerResp.TrackIDs, tracks[i].ID)
 	}
 	tickerResp.Processing = int64(float64(time.Since(startTime)) / float64(time.Millisecond))
 	json.NewEncoder(w).Encode(tickerResp)
