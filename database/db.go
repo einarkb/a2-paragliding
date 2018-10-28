@@ -29,6 +29,12 @@ type TrackInfo struct {
 	TrackURL    string            `bson:"track_url" json:"track_url"`
 }
 
+type WebhookInfo struct {
+	ID              objectid.ObjectID `bson:"_id" json:"-"`
+	WebhookURL      string            `bson:"webhookURL" json:"webhookURL"`
+	MinTriggerValue int               `bson:"minTriggerValue" json:"minTriggerValue"`
+}
+
 // Connect creates a connection to the database
 func (db *DB) Connect() {
 	conn, err := mongo.Connect(context.Background(), db.URI, nil)
