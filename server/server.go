@@ -33,6 +33,7 @@ func (server *Server) Start() {
 	server.db.Connect()
 	server.webhookMgr = &webhook.WebHookMgr{DB: server.db}
 	server.trackMgr = &track.TrackMgr{DB: server.db, WHMgr: server.webhookMgr}
+	server.mgrTicker = &ticker.MgrTicker{DB: server.db}
 	server.adminMgr = &admin.AdminMgr{DB: server.db}
 	server.initHandlers()
 
