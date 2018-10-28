@@ -16,5 +16,5 @@ type MgrTicker struct {
 // it responds with the timestamp of teh lastest added track
 func (mgrTicker *MgrTicker) HandlerLatestTick(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("content-type", "text/plain")
-	fmt.Fprint(w, mgrTicker.DB.GetLatestTrack())
+	fmt.Fprint(w, mgrTicker.DB.GetLatestTrack().Timestamp)
 }
