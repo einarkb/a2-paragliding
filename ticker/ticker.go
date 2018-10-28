@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strconv"
+	"strings"
 	"time"
 
 	db "github.com/einarkb/paragliding/database"
@@ -67,8 +69,45 @@ func (mgrTicker *MgrTicker) HandlerTicker(w http.ResponseWriter, r *http.Request
 		return
 	}
 	tickerResp.TStop = tracks[stopIndex].Timestamp
-	for i := 0; i < mgrTicker.PageCap; i++ {
+	for i := 0; i < mgrTicker.PageCap && i < nTracks; i++ { // loop and append the 'PageCap'oldest track ids
 		tickerResp.TrackIDs = append(tickerResp.TrackIDs, tracks[i].ID)
+	}
+	tickerResp.Processing = int64(float64(time.Since(startTime)) / float64(time.Millisecond))
+	json.NewEncoder(w).Encode(tickerResp)
+}
+
+// HandlerTickerByTimestamp is the handler for GET /api/ticker/<timestamp>
+func (mgrTicker *MgrTicker) HandlerTickerByTimestamp(w http.ResponseWriter, r *http.Request) {
+	w.Header().Add("content-type", "application/json")
+	startTime := time.Now()
+	tracks, err := mgrTicker.DB.GetAllTracks()
+	if err != nil {
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
+	}
+	if len(tracks) == 0 {
+		fmt.Fprint(w, "No tracks")
+		return
+	}
+	nTracks := len(tracks)
+	tickerResp := Response{}
+	tickerResp.TLatest = tracks[nTracks-1].Timestamp
+
+	parts := strings.Split(r.URL.Path, "/")
+	addedCount := 0
+	inputTimestamp, _ := strconv.ParseInt(parts[len(parts)-1], 10, 64) // regex will ensure it is an actual number
+	for _, v := range tracks {
+		if v.Timestamp > inputTimestamp { // guaranteed to not be out of range cause regex checks
+			tickerResp.TrackIDs = append(tickerResp.TrackIDs, v.ID)
+			if addedCount == 0 {
+				tickerResp.TStart = v.Timestamp
+			}
+			addedCount++
+			if addedCount == mgrTicker.PageCap {
+				tickerResp.TStop = v.Timestamp
+				break
+			}
+		}
 	}
 	tickerResp.Processing = int64(float64(time.Since(startTime)) / float64(time.Millisecond))
 	json.NewEncoder(w).Encode(tickerResp)

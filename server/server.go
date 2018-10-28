@@ -73,6 +73,7 @@ func (server *Server) initHandlers() {
 
 	server.urlHandlers["GET"]["^/paragliding/api/ticker/latest$"] = server.mgrTicker.HandlerLatestTick
 	server.urlHandlers["GET"]["^/paragliding/api/ticker/$"] = server.mgrTicker.HandlerTicker
+	server.urlHandlers["GET"]["^/paragliding/api/ticker/[0-9]{1,20}$"] = server.mgrTicker.HandlerTickerByTimestamp
 
 	server.urlHandlers["POST"]["^/paragliding/api/webhook/new_track/$"] = server.webhookMgr.HandlerNewTrackWebHook
 
