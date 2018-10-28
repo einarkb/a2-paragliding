@@ -132,6 +132,7 @@ func (db *DB) GetLatestTrack() TrackInfo {
 	//var err error
 	track := TrackInfo{}
 	cursor, _ = db.db.Collection("tracks").Find(context.Background(), bson.NewDocument(bson.EC.Int64("timestamp", -1)))
+	cursor.Next(context.Background())
 	cursor.Decode(&track)
 	return track
 }
