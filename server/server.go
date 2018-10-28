@@ -33,7 +33,7 @@ func (server *Server) Start() {
 	server.db.Connect()
 	server.webhookMgr = &webhook.WebHookMgr{DB: server.db}
 	server.trackMgr = &track.TrackMgr{DB: server.db, WHMgr: server.webhookMgr}
-	server.mgrTicker = &ticker.MgrTicker{DB: server.db}
+	server.mgrTicker = &ticker.MgrTicker{DB: server.db, PageCap: 5}
 	server.adminMgr = &admin.AdminMgr{DB: server.db}
 	server.initHandlers()
 
@@ -72,6 +72,7 @@ func (server *Server) initHandlers() {
 	server.urlHandlers["GET"]["^/paragliding/api/track/[a-zA-Z0-9]{1,50}/[a-zA-Z0-9_.-]{1,50}$"] = server.trackMgr.HandlerGetTrackFieldByID
 
 	server.urlHandlers["GET"]["^/paragliding/api/ticker/latest$"] = server.mgrTicker.HandlerLatestTick
+	server.urlHandlers["GET"]["^/paragliding/api/ticker/$"] = server.mgrTicker.HandlerTicker
 
 	server.urlHandlers["POST"]["^/paragliding/api/webhook/new_track/$"] = server.webhookMgr.HandlerNewTrackWebHook
 
