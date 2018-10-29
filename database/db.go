@@ -33,8 +33,9 @@ type TrackInfo struct {
 type WebhookInfo struct {
 	ID              objectid.ObjectID `bson:"_id" json:"-"`
 	WebhookURL      string            `bson:"webhookURL" json:"webhookURL"`
-	MinTriggerValue int               `bson:"minTriggerValue" json:"minTriggerValue"`
-	Counter         int               `bson:"counter" json:"-"`
+	MinTriggerValue int64             `bson:"minTriggerValue" json:"minTriggerValue"`
+	Counter         int64             `bson:"counter" json:"-"`
+	LatestTimestamp int64             `bson:"latestTimestamp" json:"-"` // the latest timestamp that invoked this webhook
 }
 
 // Connect creates a connection to the database
@@ -147,4 +148,50 @@ func (db *DB) GetAllTracks() ([]TrackInfo, error) {
 		tracks = append(tracks, track)
 	}
 	return tracks, err
+}
+
+// GetAllInvokeWebhooks returns an rray of every webhook that should be invoked
+func (db *DB) GetAllInvokeWebhooks() ([]WebhookInfo, error) {
+	// subtracts 1 from each webhook's counter
+	coll := db.db.Collection("webhooks")
+	_, err := coll.UpdateMany(context.Background(), nil, bson.EC.SubDocumentFromElements("$inc",
+		bson.EC.Int64("counter", -1)))
+	if err != nil {
+		fmt.Println(err)
+		return nil, err
+	}
+
+	// selects all webhooks that should be triggered (counter = 0)
+	cursor, err2 := coll.Find(context.Background(), bson.NewDocument(bson.EC.SubDocumentFromElements("triggerCount",
+		bson.EC.Int64("$lte", 0))))
+	if err2 != nil {
+		fmt.Println(err2)
+		return nil, err2
+	}
+	defer cursor.Close(context.Background())
+
+	var whs []WebhookInfo
+	wh := WebhookInfo{}
+	// adds the webhooks to be invoked into the array that will be returned
+	for cursor.Next(context.Background()) {
+		err := cursor.Decode(&wh)
+		if err != nil {
+			log.Fatal(err)
+		}
+		whs = append(whs, wh)
+	}
+	return whs, nil
+}
+
+// ResetWebhookCounter resets the counter and updates LatestTimestamp for the passed webhook
+func (db *DB) ResetWebhookCounter(webhook WebhookInfo) {
+	_, err := db.db.Collection("webhooks").UpdateMany(context.Background(),
+		bson.NewDocument(bson.EC.ObjectID("_id", webhook.ID)),
+		bson.NewDocument(
+			bson.EC.SubDocumentFromElements("$set",
+				bson.EC.Int64("counter", webhook.MinTriggerValue),
+				bson.EC.Int64("latestTimestamp", webhook.LatestTimestamp))))
+	if err != nil {
+		log.Fatal(err)
+	}
 }

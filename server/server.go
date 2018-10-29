@@ -31,9 +31,9 @@ func (server *Server) Start() {
 	server.startTime = time.Now()
 	server.db = &db.DB{URI: "mongodb://test:test12@ds141783.mlab.com:41783/a2-trackdb", Name: "a2-trackdb"}
 	server.db.Connect()
-	server.webhookMgr = &webhook.WebHookMgr{DB: server.db}
-	server.trackMgr = &track.TrackMgr{DB: server.db, WHMgr: server.webhookMgr}
 	server.mgrTicker = &ticker.MgrTicker{DB: server.db, PageCap: 5}
+	server.webhookMgr = &webhook.WebHookMgr{DB: server.db, Ticker: server.mgrTicker}
+	server.trackMgr = &track.TrackMgr{DB: server.db, WHMgr: server.webhookMgr}
 	server.adminMgr = &admin.AdminMgr{DB: server.db}
 	server.initHandlers()
 

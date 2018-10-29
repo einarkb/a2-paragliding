@@ -3,6 +3,7 @@ package ticker
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 	"strconv"
 	"strings"
@@ -79,25 +80,40 @@ func (mgrTicker *MgrTicker) HandlerTicker(w http.ResponseWriter, r *http.Request
 // HandlerTickerByTimestamp is the handler for GET /api/ticker/<timestamp>
 func (mgrTicker *MgrTicker) HandlerTickerByTimestamp(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("content-type", "application/json")
+
 	startTime := time.Now()
-	tracks, err := mgrTicker.DB.GetAllTracks()
+	parts := strings.Split(r.URL.Path, "/")
+	timestamp, _ := strconv.ParseInt(parts[len(parts)-1], 10, 64) // url regex ensures this will be valid
+	resp, err := mgrTicker.GetTickerByTimeStamp(timestamp)
+
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
 	}
+
+	resp.Processing = int64(float64(time.Since(startTime)) / float64(time.Millisecond))
+	json.NewEncoder(w).Encode(resp)
+}
+
+// GetTickerByTimeStamp returns responds with the latest added track, the first and last after specified timestamp, and the processing time
+// returns the reponse, and error if present and a bool representing if any tracks were found
+func (mgrTicker *MgrTicker) GetTickerByTimeStamp(timestamp int64) (Response, error) {
+	startTime := time.Now()
+	tickerResp := Response{}
+	tracks, err := mgrTicker.DB.GetAllTracks()
+	if err != nil {
+		log.Fatal(err)
+		return tickerResp, err
+	}
 	if len(tracks) == 0 {
-		fmt.Fprint(w, "No tracks")
-		return
+		return tickerResp, err
 	}
 	nTracks := len(tracks)
-	tickerResp := Response{}
 	tickerResp.TLatest = tracks[nTracks-1].Timestamp
 
-	parts := strings.Split(r.URL.Path, "/")
 	addedCount := 0
-	inputTimestamp, _ := strconv.ParseInt(parts[len(parts)-1], 10, 64) // regex will ensure it is an actual number
 	for _, v := range tracks {
-		if v.Timestamp > inputTimestamp { // guaranteed to not be out of range cause regex checks
+		if v.Timestamp > timestamp { // guaranteed to not be out of range cause regex checks
 			tickerResp.TrackIDs = append(tickerResp.TrackIDs, v.ID)
 			if addedCount == 0 {
 				tickerResp.TStart = v.Timestamp
@@ -110,5 +126,5 @@ func (mgrTicker *MgrTicker) HandlerTickerByTimestamp(w http.ResponseWriter, r *h
 		}
 	}
 	tickerResp.Processing = int64(float64(time.Since(startTime)) / float64(time.Millisecond))
-	json.NewEncoder(w).Encode(tickerResp)
+	return tickerResp, err
 }
