@@ -63,6 +63,23 @@ func (whMgr *WebHookMgr) HandlerGetWebhookHookByID(w http.ResponseWriter, r *htt
 	json.NewEncoder(w).Encode(webhookInfo)
 }
 
+// HandlerDeleteWebhookHookByID is the handler for "DELETE /api/webhook/new_track/<webhook_id>"
+// it deletes the webhook and reponds with the webhook's info
+func (whMgr *WebHookMgr) HandlerDeleteWebhookHookByID(w http.ResponseWriter, r *http.Request) {
+	w.Header().Add("content-type", "application/json")
+	parts := strings.Split(r.URL.Path, "/")
+	webhookInfo, found := whMgr.DB.GetWebhookByID(parts[len(parts)-1]) // guaranteed to be valid cause of regex in server.go
+	if !found {
+		http.Error(w, "the id does not exist", http.StatusNotFound)
+		return
+	}
+	err := whMgr.DB.DeleteWebhookByID(parts[len(parts)-1])
+	if err != nil {
+		http.Error(w, "could not delete webhook", http.StatusInternalServerError)
+	}
+	json.NewEncoder(w).Encode(webhookInfo)
+}
+
 // InvokeNewWebHooks should be called when a new track is added. it will invoke the webohooks that should be invoked
 func (whMgr *WebHookMgr) InvokeNewWebHooks() {
 	webhooks, err := whMgr.DB.GetAllInvokeWebhooks()

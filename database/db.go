@@ -175,6 +175,19 @@ func (db *DB) GetWebhookByID(id string) (WebhookInfo, bool) {
 	return webhook, true
 }
 
+// DeleteWebhookByID deletes the specified webhook from the database
+func (db *DB) DeleteWebhookByID(id string) error {
+	oID, err := objectid.FromHex(id)
+	if err != nil {
+		return err
+	}
+	_, err2 := db.db.Collection("webhooks").DeleteMany(context.Background(), bson.NewDocument(bson.EC.ObjectID("_id", oID)), nil)
+	if err2 != nil {
+		return err2
+	}
+	return nil
+}
+
 // GetAllInvokeWebhooks returns an rray of every webhook that should be invoked
 func (db *DB) GetAllInvokeWebhooks() ([]WebhookInfo, error) {
 	// subtracts 1 from each webhook's counter
