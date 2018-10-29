@@ -1,4 +1,4 @@
-package server
+package paragliding
 
 import (
 	"encoding/json"

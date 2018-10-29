@@ -1,10 +1,8 @@
 package main
 
-import (
-	"github.com/einarkb/paragliding/server"
-)
+import "github.com/einarkb/paragliding/paragliding"
 
 func main() {
-	server := server.Server{}
+	server := paragliding.Server{}
 	server.Start()
 }
