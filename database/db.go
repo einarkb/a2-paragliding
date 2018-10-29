@@ -154,8 +154,8 @@ func (db *DB) GetAllTracks() ([]TrackInfo, error) {
 func (db *DB) GetAllInvokeWebhooks() ([]WebhookInfo, error) {
 	// subtracts 1 from each webhook's counter
 	coll := db.db.Collection("webhooks")
-	_, err := coll.UpdateMany(context.Background(), nil, bson.EC.SubDocumentFromElements("$inc",
-		bson.EC.Int64("counter", -1)))
+	_, err := coll.UpdateMany(context.Background(), nil, bson.NewDocument(bson.EC.SubDocumentFromElements("$inc",
+		bson.EC.Int64("counter", -1))))
 	if err != nil {
 		fmt.Println(err)
 		fmt.Println("feil her")
