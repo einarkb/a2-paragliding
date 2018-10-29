@@ -150,6 +150,31 @@ func (db *DB) GetAllTracks() ([]TrackInfo, error) {
 	return tracks, err
 }
 
+// GetWebhookByID returns the webhook for the given id and true/false for wether it was found
+func (db *DB) GetWebhookByID(id string) (WebhookInfo, bool) {
+	var cursor mongo.Cursor
+	var err error
+	webhook := WebhookInfo{}
+	objectID, _ := objectid.FromHex(id)
+	cursor, err = db.db.Collection("webhooks").Find(context.Background(), bson.NewDocument(bson.EC.ObjectID("_id", objectID)))
+	if err != nil {
+		fmt.Println(err)
+		return webhook, false
+	}
+	//defer cursor.Close(context.Background())
+	for cursor.Next(context.Background()) {
+		err := cursor.Decode(&webhook)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
+	if webhook == (WebhookInfo{}) {
+		return webhook, false
+	}
+
+	return webhook, true
+}
+
 // GetAllInvokeWebhooks returns an rray of every webhook that should be invoked
 func (db *DB) GetAllInvokeWebhooks() ([]WebhookInfo, error) {
 	// subtracts 1 from each webhook's counter

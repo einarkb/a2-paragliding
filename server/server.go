@@ -76,6 +76,7 @@ func (server *Server) initHandlers() {
 	server.urlHandlers["GET"]["^/paragliding/api/ticker/[0-9]{1,20}$"] = server.mgrTicker.HandlerTickerByTimestamp
 
 	server.urlHandlers["POST"]["^/paragliding/api/webhook/new_track/$"] = server.webhookMgr.HandlerNewTrackWebHook
+	server.urlHandlers["GET"]["^/paragliding/api/webhook/new_track/[a-zA-Z0-9]{1,100}$"] = server.webhookMgr.HandlerGetWebhookHookByID
 
 	server.urlHandlers["GET"]["^/paragliding/admin/api/tracks_count$"] = server.adminMgr.HandlerTrackCount
 	server.urlHandlers["DELETE"]["^/paragliding/admin/api/tracks$"] = server.adminMgr.HandlerDeleteAllTracks

@@ -7,6 +7,7 @@ import (
 	"io"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 
 	db "github.com/einarkb/paragliding/database"
@@ -47,6 +48,19 @@ func (whMgr *WebHookMgr) HandlerNewTrackWebHook(w http.ResponseWriter, r *http.R
 	} else {
 		http.Error(w, "Something went wrong", http.StatusInternalServerError)
 	}
+}
+
+// HandlerGetWebhookHookByID is the handler for "GET /api/webhook/new_track/<webhook_id>"
+// it responds with the webhoo url and the minimum trigger value
+func (whMgr *WebHookMgr) HandlerGetWebhookHookByID(w http.ResponseWriter, r *http.Request) {
+	w.Header().Add("content-type", "application/json")
+	parts := strings.Split(r.URL.Path, "/")
+	webhookInfo, found := whMgr.DB.GetWebhookByID(parts[len(parts)-1]) // guaranteed to be valid cause of regex in server.go
+	if !found {
+		http.Error(w, "the id does not exist", http.StatusNotFound)
+		return
+	}
+	json.NewEncoder(w).Encode(webhookInfo)
 }
 
 // InvokeNewWebHooks should be called when a new track is added. it will invoke the webohooks that should be invoked
