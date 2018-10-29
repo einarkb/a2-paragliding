@@ -3,7 +3,6 @@ package paragliding
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
 	"os"
 	"regexp"
@@ -41,11 +40,11 @@ func (server *Server) Start() {
 
 	port := os.Getenv("PORT")
 	if port == "" {
-		log.Fatal("$PORT is not set")
+		//log.Fatal("$PORT is not set")
 	}
 
 	http.HandleFunc("/", server.urlHandler)
-	http.ListenAndServe(":"+port, nil)
+	//http.ListenAndServe(":"+port, nil)
 }
 
 func (server *Server) initHandlers() {
