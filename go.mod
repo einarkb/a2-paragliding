@@ -1,4 +1,4 @@
-module github.com/einarkb/paragliding
+module github.com/einarkb/server
 
 // +heroku goVersion go1.11
 // +heroku install ./cmd/..
