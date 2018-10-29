@@ -6,7 +6,8 @@ import (
 	"net/http"
 	"regexp"
 	"time"
-
+	"os"
+	"log"
 	"github.com/einarkb/paragliding/admin"
 	db "github.com/einarkb/paragliding/database"
 	"github.com/einarkb/paragliding/ticker"
