@@ -163,7 +163,7 @@ func (db *DB) GetAllInvokeWebhooks() ([]WebhookInfo, error) {
 	}
 
 	// selects all webhooks that should be triggered (counter = 0)
-	cursor, err2 := coll.Find(context.Background(), bson.NewDocument(bson.EC.SubDocumentFromElements("triggerCount",
+	cursor, err2 := coll.Find(context.Background(), bson.NewDocument(bson.EC.SubDocumentFromElements("counter",
 		bson.EC.Int64("$lte", 0))))
 	if err2 != nil {
 		fmt.Println(err2)
