@@ -3,7 +3,9 @@ package server
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
+	"os"
 	"regexp"
 	"time"
 
@@ -37,8 +39,13 @@ func (server *Server) Start() {
 	server.adminMgr = &admin.AdminMgr{DB: server.db}
 	server.initHandlers()
 
+	port := os.Getenv("PORT")
+	if port == "" {
+		log.Fatal("$PORT is not set")
+	}
+
 	http.HandleFunc("/", server.urlHandler)
-	http.ListenAndServe(":80", nil)
+	http.ListenAndServe(":"+port, nil)
 }
 
 func (server *Server) initHandlers() {
