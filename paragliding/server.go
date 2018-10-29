@@ -1,18 +1,19 @@
-package paragliding
+package server
 
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 	"os"
 	"regexp"
 	"time"
 
-	"github.com/einarkb/a2-paragliding/admin"
-	db "github.com/einarkb/a2-paragliding/database"
-	"github.com/einarkb/a2-paragliding/ticker"
-	"github.com/einarkb/a2-paragliding/track"
-	"github.com/einarkb/a2-paragliding/webhook"
+	"github.com/einarkb/paragliding/admin"
+	db "github.com/einarkb/paragliding/database"
+	"github.com/einarkb/paragliding/ticker"
+	"github.com/einarkb/paragliding/track"
+	"github.com/einarkb/paragliding/webhook"
 )
 
 type Server struct {
@@ -40,11 +41,11 @@ func (server *Server) Start() {
 
 	port := os.Getenv("PORT")
 	if port == "" {
-		//log.Fatal("$PORT is not set")
+		log.Fatal("$PORT is not set")
 	}
 
 	http.HandleFunc("/", server.urlHandler)
-	//http.ListenAndServe(":"+port, nil)
+	http.ListenAndServe(":"+port, nil)
 }
 
 func (server *Server) initHandlers() {

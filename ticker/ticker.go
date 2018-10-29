@@ -9,7 +9,7 @@ import (
 	"strings"
 	"time"
 
-	db "github.com/einarkb/a2-paragliding/database"
+	db "github.com/einarkb/paragliding/database"
 	"github.com/mongodb/mongo-go-driver/bson/objectid"
 )
 

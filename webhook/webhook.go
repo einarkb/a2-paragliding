@@ -10,8 +10,8 @@ import (
 	"strings"
 	"time"
 
-	db "github.com/einarkb/a2-paragliding/database"
-	"github.com/einarkb/a2-paragliding/ticker"
+	db "github.com/einarkb/paragliding/database"
+	"github.com/einarkb/paragliding/ticker"
 	"github.com/mongodb/mongo-go-driver/bson/objectid"
 )
 
