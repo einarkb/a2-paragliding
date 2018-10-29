@@ -40,6 +40,7 @@ func (tMgr *TrackMgr) HandlerPostTrack(w http.ResponseWriter, r *http.Request) {
 			json.NewEncoder(w).Encode(struct {
 				ID string `json:"id"`
 			}{id})
+			tMgr.WHMgr.InvokeNewWebHooks() // invoke webhooks cause new track is added
 		} else {
 			http.Error(w, "track already exists with id: "+id, http.StatusBadRequest)
 		}
