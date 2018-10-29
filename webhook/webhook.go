@@ -32,7 +32,7 @@ func (whMgr *WebHookMgr) HandlerNewTrackWebHook(w http.ResponseWriter, r *http.R
 			return
 		}
 		minTriggerVal, _ := strconv.ParseInt(postData["minTriggerValue"], 10, 64) // guaranteed to be number cause regex checks in url
-		wekbookInfo := db.WebhookInfo{ID: objectid.New(), WebhookURL: postData["url"], MinTriggerValue: int64(triggerVal), Counter: minTriggerVal, LatestTimestamp: 0}
+		wekbookInfo := db.WebhookInfo{ID: objectid.New(), WebhookURL: postData["webhookURL"], MinTriggerValue: int64(triggerVal), Counter: minTriggerVal, LatestTimestamp: 0}
 		id, added := whMgr.DB.Insert("webhooks", wekbookInfo)
 		if added {
 			w.Header().Add("content-type", "application/json")
