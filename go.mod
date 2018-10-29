@@ -1,5 +1,8 @@
 module github.com/einarkb/paragliding
 
+// +heroku goVersion go1.11
+// +heroku install ./cmd/...
+
 require (
 	github.com/go-stack/stack v1.8.0 // indirect
 	github.com/golang/snappy v0.0.0-20180518054509-2e65f85255db // indirect
