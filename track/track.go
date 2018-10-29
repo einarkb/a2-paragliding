@@ -11,8 +11,8 @@ import (
 
 	"github.com/mongodb/mongo-go-driver/bson/objectid"
 
-	db "github.com/einarkb/paragliding/database"
-	"github.com/einarkb/paragliding/webhook"
+	db "github.com/einarkb/a2-paragliding/database"
+	"github.com/einarkb/a2-paragliding/webhook"
 	igc "github.com/marni/goigc"
 )
 

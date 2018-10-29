@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	db "github.com/einarkb/paragliding/database"
+	db "github.com/einarkb/a2-paragliding/database"
 )
 
 type AdminMgr struct {

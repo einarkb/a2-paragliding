@@ -45,7 +45,7 @@ func (server *Server) Start() {
 	}
 
 	http.HandleFunc("/", server.urlHandler)
-	http.ListenAndServe(":8080", nil)
+	http.ListenAndServe(":"+port, nil)
 }
 
 func (server *Server) initHandlers() {
