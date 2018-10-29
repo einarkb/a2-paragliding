@@ -91,6 +91,7 @@ func (whMgr *WebHookMgr) InvokeNewWebHooks() {
 		if postErr != nil {
 			fmt.Println(postErr)
 		}
+		whMgr.Ticker.DB.ResetWebhookCounter(v)
 
 	}
 
