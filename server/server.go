@@ -28,6 +28,11 @@ type Server struct {
 
 // Start starts the server
 func (server *Server) Start() {
+	port := os.Getenv("PORT")
+	if port == "" {
+		log.Fatal("$PORT is not set")
+	}
+
 	server.startTime = time.Now()
 	server.db = &db.DB{URI: "mongodb://test:test12@ds141783.mlab.com:41783/a2-trackdb", Name: "a2-trackdb"}
 	server.db.Connect()
@@ -38,7 +43,9 @@ func (server *Server) Start() {
 	server.initHandlers()
 
 	http.HandleFunc("/", server.urlHandler)
-	http.ListenAndServe(":80", nil)
+	if err := http.ListenAndServe(":"+port, nil); err != nil {
+		panic(err)
+	}
 }
 
 func (server *Server) initHandlers() {
